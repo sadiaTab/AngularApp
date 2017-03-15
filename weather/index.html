@@ -1,0 +1,99 @@
+<html ng-app="myApp">
+  <head>
+      <title>AngularJS Weather Forecast SPA</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta charset="UTF-8">
+
+        <!-- load bootstrap and fontawesome via CDN -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" />
+     
+        <style>
+            .ng-cloak { display: none !important; }
+              body{
+       
+          background-image: url(img/3.jpg);
+         background-size: cover;        
+
+        }
+  .centerBlock {
+  display: table;
+  margin: auto;
+}
+        .display{
+           background: rgba(78, 142, 201, 0.5);
+         background: aliceblue;
+          padding: 15px 20px; 
+        }
+       </style>
+        
+  </head>
+  <body ng-controller="mainController">
+   <section id="searchSec" style="margin-top: 10%">
+  <div class="container" style="margin-top:50px;">
+    <div class="row justify-content-center">
+     <div class="col-sm-6 display">
+        <div class="centerBlock ng-cloak">
+         <h4>{{title}}</h4>
+       <hr>
+       <h5>Find a forecast</h5>
+      <form name="myForm" class="form-inline">  
+        <input type="text" ng-model="city" class="form-control" placeholder="Enter City Here..." >
+        <button type="submit" class="btn btn-primary" ng-click="search()">Search </button>
+            </form></div>
+      </div>
+    </div>
+      </div>
+       <div class="container" style="margin-top:10px;">
+    <div class="row justify-content-center">
+      <div class="col-sm-6 ng-cloak" ng-show="myForm.$submitted"  style="margin-top:10px; background: #fff; padding: 15px;">
+        <h6>Todays weather: {{weather.name}}</h6>
+        <h6>Current weather: {{weather.weather[0].description}}</h6>
+        <h1><img src="http://openweathermap.org/img/w/{{weather.weather[0].icon}}.png"> 
+        {{ convertToCelsius(weather.main.temp) | number: 0}}&degC</h1>
+        
+        <h6><span>Max: {{convertToCelsius(weather.main.temp_max) | number: 0}}&degC</span><span class="float-right">Wind speed: {{weather.wind.speed}}</span></h6>
+        <h6><span>Min: {{convertToCelsius(weather.main.temp_min) | number: 0}}&degC</span>
+          <span class="float-right">Humidity: {{weather.main.humidity}}</span>
+        </h6>
+        
+      </div>
+      </div>  
+    </div>  
+   </section>  
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="//code.angularjs.org/1.5.6/angular.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"></script>
+  
+  <script>
+      var app = angular.module('myApp', []);
+
+app.controller('mainController', ['$scope', '$http', function($scope, $http) {
+  $scope.title = 'Angularjs Weather App';
+  $scope.city = '';
+  $scope.key = "c3f04a78ef56f14420f70e025b9add98";
+ 
+  $scope.convertToCelsius = function(temp){
+    return Math.round((temp-32)/1.8);
+  };
+  
+  $scope.search = function(city){
+          var city = $scope.city;
+        $http({
+              method : "GET",
+              url :   "http://api.openweathermap.org/data/2.5/weather?q="+city+ ",us&units=imperial&APPID=" + $scope.key
+            }).then(function mySucces(response) {
+                $scope.weather = response.data;
+              }, function myError(response) {
+                $scope.weather = response.statusText;
+            });
+  
+  }
+   $scope.clear = function() {
+    $scope.city = "";
+  }
+}]);
+      </script>
+  
+  </body>
+</html>
